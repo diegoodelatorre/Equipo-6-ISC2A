@@ -100,7 +100,7 @@ void guardarSalida(const char *nombreArchivo, Juego juego) {
 
 int main() {
     Juego *juego = new Juego;
-    leerMatriz("entrada.txt", juego->matriz);
+    leerMatriz("entrada_laberinto.txt", juego->matriz);
 
     // Contar chacales de forma recursiva
     int chacalesDiag = contarChacalesDiagonal(juego->matriz, 0);
