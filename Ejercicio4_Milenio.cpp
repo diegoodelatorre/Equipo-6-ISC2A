@@ -72,11 +72,12 @@ void procesarCasosRecursivamente(FILE *entrada, FILE *salida, int casosRestantes
     if (casosRestantes == 0) return;
 
     char bufferTitular[2100], bufferMensaje[2100];
+    // Lee el titular y el mensaje del archivo de entrada
     if (!fgets(bufferTitular, sizeof(bufferTitular), entrada)) return;
     if (!fgets(bufferMensaje, sizeof(bufferMensaje), entrada)) return;
 
     // Elimina saltos de línea
-    bufferTitular[strcspn(bufferTitular, "\n")] = '\0';
+    bufferTitular[strcspn(bufferTitular, "\n")] = '\0'; // con strcspn se elimina el salto de línea
     bufferMensaje[strcspn(bufferMensaje, "\n")] = '\0';
 
     Caso caso;
