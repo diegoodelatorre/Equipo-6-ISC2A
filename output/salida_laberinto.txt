@@ -1,0 +1,3 @@
+Suma total: 23
+Posición final -> Fila: 1, Columna: 7
+Estado: TERMINADO
