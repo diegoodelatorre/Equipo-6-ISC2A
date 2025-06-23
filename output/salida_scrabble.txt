@@ -1,0 +1,55 @@
+Colocando "AVION" en (0,4) VERTICAL: EXITO
+        A         
+        V         
+        I         
+        O         
+        N         
+                  
+                  
+                  
+                  
+
+Colocando "VINO" en (1,4) HORIZONTAL: EXITO
+        A         
+        V I N O   
+        I         
+        O         
+        N         
+                  
+                  
+                  
+                  
+
+Colocando "ION" en (2,5) VERTICAL: FALLO
+        A         
+        V I N O   
+        I         
+        O         
+        N         
+                  
+                  
+                  
+                  
+
+Colocando "OIN" en (3,4) HORIZONTAL: EXITO
+        A         
+        V I N O   
+        I         
+        O I N     
+        N         
+                  
+                  
+                  
+                  
+
+Colocando "ARBOL" en (3,2) HORIZONTAL: FALLO
+        A         
+        V I N O   
+        I         
+        O I N     
+        N         
+                  
+                  
+                  
+                  
+
