@@ -109,8 +109,8 @@ void procesarLineasRecursivamente(FILE *entrada, FILE *salida) {
 }
 
 int main() {
-    FILE *fentrada = fopen("entrada.txt", "r");
-    FILE *fsalida = fopen("salida.txt", "w");
+    FILE *fentrada = fopen("entrada_teclado.txt", "r");
+    FILE *fsalida = fopen("salida_teclado.txt", "w");
 
     if (!fentrada || !fsalida) {
         printf("Error abriendo archivos.\n");
