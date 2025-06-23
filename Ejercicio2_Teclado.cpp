@@ -97,7 +97,7 @@ void escribirSalida(FILE *archivo, const char *texto) {
 // Procesa las líneas recursivamente (extra para incluir recursividad)
 void procesarLineasRecursivamente(FILE *entrada, FILE *salida) {
     char buffer[1024];
-    if (fgets(buffer, sizeof(buffer), entrada) == NULL)
+    if (fgets(buffer, sizeof(buffer), entrada) == NULL) // Lee una sola línea
         return;
 
     Editor *e = crearEditor();
@@ -105,7 +105,7 @@ void procesarLineasRecursivamente(FILE *entrada, FILE *salida) {
     escribirSalida(salida, e->texto);
     liberarEditor(e);
 
-    procesarLineasRecursivamente(entrada, salida);
+    procesarLineasRecursivamente(entrada, salida); // Para leer las siguientes líneas
 }
 
 int main() {
