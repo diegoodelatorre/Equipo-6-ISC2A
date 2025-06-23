@@ -101,8 +101,9 @@ int main() {
 
         imprimirTablero(tablero);
         guardarTablero(tablero, archivo);
-
+        
         printf("Casillas ocupadas: %d\n", contarOcupadasRecursivo(tablero, 0, 0));
+
 
         // Validar respuesta s/n
         do {

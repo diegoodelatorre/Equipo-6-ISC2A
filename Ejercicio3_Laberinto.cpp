@@ -1,40 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
 #include <iostream>
-#include <fstream>
-#include <cstdlib>
 
-#define MAX 7
 using namespace std;
 
-// Enumeración para estado del juego
-enum EstadoJuego { SIGUE, TERMINADO };
+#define MAX 7
 
-// Unión para mostrar resultado como valor o texto
-union ResultadoUnion {
+typedef enum { SIGUE, TERMINADO } EstadoJuego;
+
+typedef union {
     int valor;
     char texto[20];
-};
+} ResultadoUnion;
 
-// Estructura para almacenar el estado del juego
-struct Juego {
+typedef struct {
     int matriz[MAX][MAX];
     int posF;
     int posC;
     int suma;
     EstadoJuego estado;
-};
+} Juego;
 
-// Función recursiva para contar chacales en la diagonal principal
 int contarChacalesDiagonal(int M[MAX][MAX], int i) {
     if (i == MAX) return 0;
     return (M[i][i] == 0 ? 1 : 0) + contarChacalesDiagonal(M, i + 1);
 }
 
-// Función que recorre el laberinto y realiza la suma
 int laberinto(Juego *juego) {
     int chacales = 0;
     juego->suma = 0;
 
-    // Recorre la diagonal principal
     for (int i = 0; i < MAX; i++) {
         if (juego->matriz[i][i] == 0) chacales++;
         juego->suma += juego->matriz[i][i];
@@ -46,7 +42,6 @@ int laberinto(Juego *juego) {
         }
     }
 
-    // Recorre la última columna hacia arriba (sin repetir la esquina inferior derecha)
     for (int i = MAX - 2; i >= 0; i--) {
         if (juego->matriz[i][MAX - 1] == 0) chacales++;
         juego->suma += juego->matriz[i][MAX - 1];
@@ -62,59 +57,70 @@ int laberinto(Juego *juego) {
     return juego->suma;
 }
 
-// Función para leer la matriz desde archivo
 void leerMatriz(const char *nombreArchivo, int M[MAX][MAX]) {
-    ifstream archivo(nombreArchivo);
+    FILE *archivo = fopen(nombreArchivo, "r");
     if (!archivo) {
-        cout << "Error al abrir archivo de entrada." << endl;
+        cout << "Error al abrir archivo de entrada.\n";
         exit(1);
     }
 
-    int valor;
+    int contador = 0;
     for (int i = 0; i < MAX; i++) {
         for (int j = 0; j < MAX; j++) {
-            if (!(archivo >> valor)) {
-                cout << "Datos insuficientes o incorrectos en el archivo." << endl;
+            if (fscanf(archivo, "%d", &M[i][j]) != 1) {
+                cout << "Datos incorrectos.\n";
+                fclose(archivo);
                 exit(1);
             }
-            M[i][j] = valor;
+            contador++;
         }
     }
 
-    archivo.close();
+    if (contador != MAX * MAX) {
+        cout << "Error: archivo incompleto.\n";
+        exit(1);
+    }
+
+    fclose(archivo);
 }
 
-// Función para guardar la salida en un archivo
 void guardarSalida(const char *nombreArchivo, Juego juego) {
-    ofstream archivo(nombreArchivo);
+    FILE *archivo = fopen(nombreArchivo, "w");
     if (!archivo) {
-        cout << "Error al escribir archivo de salida." << endl;
+        cout << "Error al escribir archivo.\n";
         return;
     }
 
-    archivo << "Suma total: " << juego.suma << endl;
-    archivo << "Posición final -> Fila: " << juego.posF << ", Columna: " << juego.posC << endl;
-    archivo << "Estado: " << (juego.estado == TERMINADO ? "TERMINADO" : "SIGUE") << endl;
-    archivo.close();
+    fprintf(archivo, "Suma total: %d\n", juego.suma);
+    fprintf(archivo, "Posición final: Fila %d, Columna %d\n", juego.posF, juego.posC);
+    fprintf(archivo, "Estado: %s\n", juego.estado == TERMINADO ? "TERMINADO" : "SIGUE");
+    fclose(archivo);
 }
 
 int main() {
-    Juego *juego = new Juego;
-    leerMatriz("entrada_laberinto.txt", juego->matriz);
+    Juego *juego = (Juego *)malloc(sizeof(Juego));
+    if (!juego) {
+        cout << "Error de memoria.\n";
+        return 1;
+    }
 
-    // Contar chacales de forma recursiva
+    // Usar archivos fijos
+    const char *archivoEntrada = "entrada_laberinto.txt";
+    const char *archivoSalida = "salida_laberinto.txt";
+
+    leerMatriz(archivoEntrada, juego->matriz);
+
     int chacalesDiag = contarChacalesDiagonal(juego->matriz, 0);
-    cout << "Chacales en la diagonal: " << chacalesDiag << endl;
+    cout << "Chacales en la diagonal: " << chacalesDiag << "\n";
 
     ResultadoUnion resultado;
     resultado.valor = laberinto(juego);
 
-    cout << "Suma total: " << resultado.valor << endl;
-    cout << "Posición final -> Fila: " << juego->posF << ", Columna: " << juego->posC << endl;
-    cout << "Estado: " << (juego->estado == TERMINADO ? "TERMINADO" : "SIGUE") << endl;
+    cout << "Suma total: " << resultado.valor << "\n";
+    cout << "Posicion final: Fila " << juego->posF << ", Columna " << juego->posC << "\n";
+    cout << "Estado: " << (juego->estado == TERMINADO ? "TERMINADO" : "SIGUE") << "\n";
 
-    guardarSalida("salida.txt", *juego);
-
-    delete juego;
+    guardarSalida(archivoSalida, *juego);
+    free(juego);
     return 0;
 }

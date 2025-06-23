@@ -1,9 +1,7 @@
-#include <iostream>
-#include <fstream>
-#include <cstring>
-#include <ctime>
-#include <cstdlib>
-using namespace std;
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 
 #define MAX 50
 
@@ -12,18 +10,18 @@ enum TipoPalabra { SUSTANTIVO = 1, VERBO = 2, ADJETIVO = 3 };
 
 // Estructura del juego
 typedef struct {
-    int tipo;                // 1 = sustantivo, 2 = verbo, 3 = adjetivo
-    char palabra[20];        // Palabra completa
-    char pista[100];         // Pista
-    char ini[5];             // Parte inicial
-    char fin[5];             // Parte final
+    int tipo;
+    char palabra[20];
+    char pista[100];
+    char ini[5];
+    char fin[5];
 } juegoT;
 
 // Procedimiento para cargar palabras desde archivo
-void cargarJuego(ifstream &in, juegoT A[], int *tam) {
+void cargarJuego(FILE *in, juegoT A[], int *tam) {
     *tam = 0;
     char linea[150];
-    while (in.getline(linea, 150)) {
+    while (fgets(linea, sizeof(linea), in)) {
         char *token = strtok(linea, ",");
         if (!token) break;
         A[*tam].tipo = atoi(token);
@@ -37,7 +35,7 @@ void cargarJuego(ifstream &in, juegoT A[], int *tam) {
         token = strtok(NULL, ",");
         strcpy(A[*tam].ini, token);
 
-        token = strtok(NULL, ",");
+        token = strtok(NULL, ",\n");
         strcpy(A[*tam].fin, token);
 
         (*tam)++;
@@ -59,7 +57,7 @@ int puntajePalabra(char *cad, juegoT e) {
 }
 
 // Función que convierte tipo numérico a texto
-string tipoPalabraTexto(int tipo) {
+const char* tipoPalabraTexto(int tipo) {
     switch (tipo) {
         case 1: return "sustantivo";
         case 2: return "verbo";
@@ -73,18 +71,18 @@ int main() {
     juegoT palabras[MAX];
     int tam;
 
-    ifstream entrada("info.dat");
+    FILE *entrada = fopen("info.dat", "r");
     if (!entrada) {
-        cout << "No se pudo abrir el archivo info.dat\n";
+        printf("No se pudo abrir el archivo info.dat\n");
         return 1;
     }
 
     cargarJuego(entrada, palabras, &tam);
-    entrada.close();
+    fclose(entrada);
 
-    ofstream salida("salida.dat");
+    FILE *salida = fopen("salida.dat", "w");
     if (!salida) {
-        cout << "No se pudo abrir archivo salida.dat\n";
+        printf("No se pudo abrir archivo salida.dat\n");
         return 1;
     }
 
@@ -93,21 +91,21 @@ int main() {
         int indice = rand() % tam;
         juegoT actual = palabras[indice];
 
-        cout << "Adivina un: " << tipoPalabraTexto(actual.tipo) << endl;
-        cout << "Pista: " << actual.pista << endl;
-        cout << "Ingresa una palabra: ";
+        printf("Adivina un: %s\n", tipoPalabraTexto(actual.tipo));
+        printf("Pista: %s\n", actual.pista);
+        printf("Ingresa una palabra: ");
 
         char respuesta[30];
-        cin >> respuesta;
+        scanf("%s", respuesta);
 
         int puntos = puntajePalabra(respuesta, actual);
         totalPuntaje += puntos;
 
-        cout << "Puntos: " << puntos << "\n\n";
-        salida << respuesta << "," << puntos << endl;
+        printf("Puntos: %d\n\n", puntos);
+        fprintf(salida, "%s,%d\n", respuesta, puntos);
     }
 
-    cout << "Puntaje total: " << totalPuntaje << endl;
-    salida.close();
+    printf("Puntaje total: %d\n", totalPuntaje);
+    fclose(salida);
     return 0;
 }
